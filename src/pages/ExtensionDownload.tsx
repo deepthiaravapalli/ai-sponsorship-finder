@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Download, Chrome, CheckCircle, ExternalLink } from "lucide-react";
+import { Download, Globe, CheckCircle } from "lucide-react";
 
 const ExtensionDownload = () => {
   const handleDownload = () => {
@@ -28,7 +28,7 @@ const ExtensionDownload = () => {
         </div>
 
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2"><Chrome className="w-5 h-5" /> Features</h2>
+          <h2 className="text-lg font-semibold flex items-center gap-2"><Globe className="w-5 h-5" /> Features</h2>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {[
               "Auto-detects company name on LinkedIn, Indeed & Glassdoor",

@@ -1,0 +1,128 @@
+/* UK Visa Sponsor Checker — Widget Styles */
+
+#uk-sponsor-widget {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 2147483647;
+  width: 220px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+#uk-sponsor-widget * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.uksw-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.uksw-header:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.uksw-icon {
+  font-size: 16px;
+}
+
+.uksw-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #aaa;
+}
+
+.uksw-arrow {
+  font-size: 10px;
+  color: #666;
+  transition: transform 0.2s;
+}
+
+.uksw-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.uksw-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.uksw-loading {
+  background: #f59e0b;
+  animation: uksw-pulse 1s ease-in-out infinite;
+}
+
+.uksw-green {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34,197,94,0.5);
+}
+
+.uksw-red {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239,68,68,0.5);
+}
+
+.uksw-yellow {
+  background: #f59e0b;
+  box-shadow: 0 0 8px rgba(245,158,11,0.5);
+}
+
+#uksw-label {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.uksw-details {
+  padding: 0 14px 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.uksw-company {
+  padding-top: 10px;
+  font-size: 12px;
+  color: #ccc;
+  word-break: break-word;
+}
+
+.uksw-match {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #888;
+}
+
+.uksw-site {
+  margin-top: 8px;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes uksw-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

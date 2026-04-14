@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "UK Visa Sponsor Checker",
+  "version": "1.0.0",
+  "description": "Instantly check if a company on LinkedIn, Indeed, or Glassdoor is a UK visa sponsorship licensed employer.",
+  "permissions": ["activeTab", "storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.linkedin.com/jobs/*",
+        "*://*.linkedin.com/company/*",
+        "*://*.indeed.com/*",
+        "*://*.indeed.co.uk/*",
+        "*://*.glassdoor.com/job-listing/*",
+        "*://*.glassdoor.co.uk/job-listing/*",
+        "*://*.glassdoor.com/Job/*",
+        "*://*.glassdoor.co.uk/Job/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

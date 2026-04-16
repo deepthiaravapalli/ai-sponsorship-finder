@@ -50,6 +50,11 @@
   // JOB PAGE DETECTION
   // =========================================================
   function isJobPage() {
+    // Google: only trigger if Google Jobs panel is visible
+    if (KNOWN_SITE === "google") {
+      return !!document.querySelector('[data-async-context*="query:"]') && 
+             (!!document.querySelector('.nJlQNd') || !!document.querySelector('[jsname="gEDjF"]') || !!document.querySelector('#job_results_list') || document.querySelector('[data-ved] [data-employer-name]'));
+    }
     if (KNOWN_SITE) return true;
 
     const url = (location.href + " " + document.title).toLowerCase();

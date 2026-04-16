@@ -31,9 +31,11 @@ const ExtensionDownload = () => {
           <h2 className="text-lg font-semibold flex items-center gap-2"><Globe className="w-5 h-5" /> Features</h2>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {[
-              "Auto-detects company name on LinkedIn, Indeed & Glassdoor",
+              "Works on 17+ UK job portals — LinkedIn, Indeed, Glassdoor, Reed, Totaljobs, Monster UK, CV-Library, CWJobs, Jobsite, Adzuna & more",
+              "Auto-detects company name on any supported job page",
               "Checks against 95+ UK licensed sponsor companies",
               "Green/Red/Yellow floating widget on job pages",
+              "Smart fallback using structured data (JSON-LD, schema.org)",
               "Search any company from the popup",
               "Zero performance impact — vanilla JS, no frameworks",
             ].map((f, i) => (
@@ -58,7 +60,7 @@ const ExtensionDownload = () => {
             <li>Open <code className="bg-muted px-1.5 py-0.5 rounded text-xs">chrome://extensions</code> in Chrome</li>
             <li>Enable <strong>Developer mode</strong> (top-right toggle)</li>
             <li>Click <strong>"Load unpacked"</strong> and select the unzipped folder</li>
-            <li>Visit any job page on LinkedIn, Indeed, or Glassdoor!</li>
+            <li>Visit any job page on LinkedIn, Indeed, Glassdoor, Reed, Totaljobs, or any supported portal!</li>
           </ol>
           <p className="text-xs text-muted-foreground mt-2">Also works on Edge, Brave, Arc, and Opera.</p>
         </div>

@@ -1,23 +1,35 @@
 // UK Visa Sponsor Checker — Background Service Worker
 
 let sponsorList = [];
+let defaultSponsors = [];
 
-// Load sponsor data on install / startup
+// Load sponsor data: default JSON + custom from storage
 async function loadSponsors() {
   try {
     const res = await fetch(chrome.runtime.getURL("sponsors.json"));
     const data = await res.json();
-    sponsorList = data.sponsors.map(s => s.toUpperCase().trim());
-    console.log(`[Sponsor Checker] Loaded ${sponsorList.length} sponsors`);
+    defaultSponsors = data.sponsors.map(s => s.toUpperCase().trim());
   } catch (e) {
     console.error("[Sponsor Checker] Failed to load sponsors:", e);
+    defaultSponsors = [];
   }
+
+  // Merge custom sponsors from storage
+  try {
+    const stored = await chrome.storage.local.get("customSponsors");
+    const custom = (stored.customSponsors || []).map(s => s.toUpperCase().trim());
+    sponsorList = [...new Set([...defaultSponsors, ...custom])];
+  } catch (e) {
+    sponsorList = [...defaultSponsors];
+  }
+
+  console.log(`[Sponsor Checker] Loaded ${sponsorList.length} sponsors (${defaultSponsors.length} default + ${sponsorList.length - defaultSponsors.length} custom)`);
 }
 
 chrome.runtime.onInstalled.addListener(loadSponsors);
 chrome.runtime.onStartup.addListener(loadSponsors);
 
-// Listen for messages from content script
+// Listen for messages
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "CHECK_SPONSOR") {
     if (sponsorList.length === 0) {
@@ -28,6 +40,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     }
     sendResponse(checkCompany(msg.company));
   }
+
+  if (msg.type === "RELOAD_SPONSORS") {
+    loadSponsors().then(() => {
+      sendResponse({ ok: true, count: sponsorList.length });
+    });
+    return true;
+  }
+
   return false;
 });
 

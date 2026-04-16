@@ -2,13 +2,24 @@
 (async function () {
   const res = await fetch(chrome.runtime.getURL("sponsors.json"));
   const data = await res.json();
-  const sponsors = data.sponsors.map(s => s.toUpperCase().trim());
+  const defaultSponsors = data.sponsors.map(s => s.toUpperCase().trim());
 
-  document.getElementById("total").textContent = sponsors.length;
+  // Load custom sponsors
+  const stored = await new Promise(r => chrome.storage.local.get("customSponsors", r));
+  const customSponsors = (stored.customSponsors || []);
+  const allSponsors = [...new Set([...defaultSponsors, ...customSponsors.map(s => s.toUpperCase().trim())])];
+
+  document.getElementById("total").textContent = allSponsors.length;
+  document.getElementById("custom").textContent = customSponsors.length;
 
   // Load check count
   chrome.storage.local.get("checkCount", (r) => {
     document.getElementById("checked").textContent = r.checkCount || 0;
+  });
+
+  // Admin panel link
+  document.getElementById("openAdmin").addEventListener("click", () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("admin.html") });
   });
 
   const input = document.getElementById("searchInput");
@@ -30,8 +41,8 @@
     }
 
     const q = query.toUpperCase();
-    const exact = sponsors.includes(q);
-    const fuzzy = !exact && sponsors.find(s =>
+    const exact = allSponsors.includes(q);
+    const fuzzy = !exact && allSponsors.find(s =>
       s.includes(q) || q.includes(s.replace(/ (LIMITED|LTD|PLC|LLP|INC|B\.V\.)$/i, "").trim())
     );
 

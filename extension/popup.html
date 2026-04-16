@@ -68,6 +68,19 @@
       color: #475569;
       text-align: center;
     }
+    .admin-link {
+      display: block;
+      text-align: center;
+      padding: 10px 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: #c084fc;
+      background: rgba(168,85,247,0.06);
+      transition: background 0.15s;
+    }
+    .admin-link:hover { background: rgba(168,85,247,0.12); }
     .supported {
       padding: 10px 16px;
       border-top: 1px solid rgba(255,255,255,0.04);
@@ -90,6 +103,10 @@
       <div class="stat-label">Sponsors</div>
     </div>
     <div class="stat">
+      <div class="stat-num" id="custom">0</div>
+      <div class="stat-label">Custom</div>
+    </div>
+    <div class="stat">
       <div class="stat-num" id="checked">0</div>
       <div class="stat-label">Checked</div>
     </div>
@@ -103,8 +120,9 @@
       <div class="result-status" id="resultStatus"></div>
     </div>
   </div>
-  <div class="info">Visit a job page on LinkedIn, Indeed, or Glassdoor for auto-detection.</div>
-  <div class="supported">Works on: <span>LinkedIn · Indeed · Glassdoor</span></div>
+  <div class="info">Visit a job page for auto-detection — works on any site.</div>
+  <div class="admin-link" id="openAdmin">⚙️ Manage Sponsors (Admin Panel)</div>
+  <div class="supported">Works on: <span>LinkedIn · Indeed · Glassdoor · Reed · Totaljobs · Any job page</span></div>
 
   <script src="popup.js"></script>
 </body>

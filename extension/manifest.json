@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "UK Visa Sponsor Checker",
-  "version": "1.1.0",
-  "description": "Instantly check if a company is a UK visa sponsorship licensed employer — works on LinkedIn, Indeed, Glassdoor, Reed, Totaljobs, Monster, CV-Library, CWJobs, Jobsite, and more.",
+  "version": "1.2.0",
+  "description": "Instantly check if a company is a UK visa sponsorship licensed employer — works on any job page across the web.",
   "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html",
@@ -16,33 +16,7 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://*.linkedin.com/jobs/*",
-        "*://*.linkedin.com/company/*",
-        "*://*.indeed.com/*",
-        "*://*.indeed.co.uk/*",
-        "*://*.glassdoor.com/job-listing/*",
-        "*://*.glassdoor.co.uk/job-listing/*",
-        "*://*.glassdoor.com/Job/*",
-        "*://*.glassdoor.co.uk/Job/*",
-        "*://*.reed.co.uk/jobs/*",
-        "*://*.totaljobs.com/job/*",
-        "*://*.totaljobs.com/jobs/*",
-        "*://*.monster.co.uk/job-openings/*",
-        "*://*.monster.co.uk/jobs/*",
-        "*://*.cv-library.co.uk/job/*",
-        "*://*.cwjobs.co.uk/job/*",
-        "*://*.jobsite.co.uk/job/*",
-        "*://*.adzuna.co.uk/jobs/*",
-        "*://*.workable.com/j/*",
-        "*://*.workable.com/view/*",
-        "*://*.guardian.co.uk/jobs/*",
-        "*://*.jobs.ac.uk/job/*",
-        "*://*.charityjob.co.uk/jobs/*",
-        "*://*.s1jobs.com/job/*",
-        "*://*.nijobs.com/job/*",
-        "*://*.fish4.co.uk/job/*"
-      ],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"

@@ -18,14 +18,49 @@
     if (h.includes("linkedin.com")) return "linkedin";
     if (h.includes("indeed.com") || h.includes("indeed.co.uk")) return "indeed";
     if (h.includes("glassdoor.com") || h.includes("glassdoor.co.uk")) return "glassdoor";
+    if (h.includes("reed.co.uk")) return "reed";
+    if (h.includes("totaljobs.com")) return "totaljobs";
+    if (h.includes("monster.co.uk")) return "monster";
+    if (h.includes("cv-library.co.uk")) return "cv-library";
+    if (h.includes("cwjobs.co.uk")) return "cwjobs";
+    if (h.includes("jobsite.co.uk")) return "jobsite";
+    if (h.includes("adzuna.co.uk")) return "adzuna";
+    if (h.includes("workable.com")) return "workable";
+    if (h.includes("guardian.co.uk")) return "guardian";
+    if (h.includes("jobs.ac.uk")) return "jobs.ac.uk";
+    if (h.includes("charityjob.co.uk")) return "charityjob";
+    if (h.includes("s1jobs.com")) return "s1jobs";
+    if (h.includes("nijobs.com")) return "nijobs";
+    if (h.includes("fish4.co.uk")) return "fish4";
     return null;
   }
+
+  // --- Pretty site name ---
+  const SITE_NAMES = {
+    linkedin: "LinkedIn",
+    indeed: "Indeed",
+    glassdoor: "Glassdoor",
+    reed: "Reed",
+    totaljobs: "Totaljobs",
+    monster: "Monster UK",
+    "cv-library": "CV-Library",
+    cwjobs: "CWJobs",
+    jobsite: "Jobsite",
+    adzuna: "Adzuna",
+    workable: "Workable",
+    guardian: "Guardian Jobs",
+    "jobs.ac.uk": "Jobs.ac.uk",
+    charityjob: "CharityJob",
+    s1jobs: "S1Jobs",
+    nijobs: "NIJobs",
+    fish4: "Fish4Jobs",
+  };
 
   // --- Company extraction ---
   function extractCompany() {
     try {
+      // LinkedIn
       if (SITE === "linkedin") {
-        // Job detail page
         const el =
           document.querySelector(".job-details-jobs-unified-top-card__company-name a") ||
           document.querySelector(".jobs-unified-top-card__company-name a") ||
@@ -36,6 +71,7 @@
         if (el) return el.textContent.trim();
       }
 
+      // Indeed
       if (SITE === "indeed") {
         const el =
           document.querySelector('[data-testid="inlineHeader-companyName"] a') ||
@@ -47,12 +83,159 @@
         if (el) return el.textContent.trim();
       }
 
+      // Glassdoor
       if (SITE === "glassdoor") {
         const el =
           document.querySelector('[data-test="employer-name"]') ||
           document.querySelector(".css-16nw1r8") ||
           document.querySelector(".employerName");
         if (el) return el.textContent.trim().replace(/\s*\d+(\.\d+)?\s*★/, "");
+      }
+
+      // Reed
+      if (SITE === "reed") {
+        const el =
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]') ||
+          document.querySelector(".company-name a") ||
+          document.querySelector(".company-name") ||
+          document.querySelector('[data-qa="recruiterName"]') ||
+          document.querySelector(".posted-by a");
+        if (el) return el.textContent.trim();
+      }
+
+      // Totaljobs
+      if (SITE === "totaljobs") {
+        const el =
+          document.querySelector('[data-at="header-company-name"]') ||
+          document.querySelector(".company-link") ||
+          document.querySelector('[class*="CompanyName"]') ||
+          document.querySelector(".at-listing__list-icons_company-name");
+        if (el) return el.textContent.trim();
+      }
+
+      // Monster UK
+      if (SITE === "monster") {
+        const el =
+          document.querySelector('[data-testid="company-name"]') ||
+          document.querySelector(".job-header-company a") ||
+          document.querySelector(".job-header-company") ||
+          document.querySelector('[name="company"]');
+        if (el) return (el.content || el.textContent).trim();
+      }
+
+      // CV-Library
+      if (SITE === "cv-library") {
+        const el =
+          document.querySelector(".job-header__company a") ||
+          document.querySelector(".job-header__company") ||
+          document.querySelector('[data-company-name]') ||
+          document.querySelector(".company-name a");
+        if (el) return el.textContent.trim();
+      }
+
+      // CWJobs
+      if (SITE === "cwjobs") {
+        const el =
+          document.querySelector('[data-at="header-company-name"]') ||
+          document.querySelector(".company-link") ||
+          document.querySelector('[class*="CompanyName"]');
+        if (el) return el.textContent.trim();
+      }
+
+      // Jobsite
+      if (SITE === "jobsite") {
+        const el =
+          document.querySelector('[data-at="header-company-name"]') ||
+          document.querySelector(".company-link") ||
+          document.querySelector('[class*="CompanyName"]');
+        if (el) return el.textContent.trim();
+      }
+
+      // Adzuna
+      if (SITE === "adzuna") {
+        const el =
+          document.querySelector(".ui-company a") ||
+          document.querySelector(".ui-company") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]') ||
+          document.querySelector("h2.company");
+        if (el) return el.textContent.trim();
+      }
+
+      // Workable
+      if (SITE === "workable") {
+        const el =
+          document.querySelector('[data-ui="company-name"]') ||
+          document.querySelector(".company-name") ||
+          document.querySelector("h2");
+        if (el) return el.textContent.trim();
+      }
+
+      // Guardian Jobs
+      if (SITE === "guardian") {
+        const el =
+          document.querySelector(".job-detail__company-name") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]') ||
+          document.querySelector(".recruiter-name a");
+        if (el) return el.textContent.trim();
+      }
+
+      // Jobs.ac.uk
+      if (SITE === "jobs.ac.uk") {
+        const el =
+          document.querySelector(".employer-name") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]') ||
+          document.querySelector(".h3.employer");
+        if (el) return el.textContent.trim();
+      }
+
+      // CharityJob
+      if (SITE === "charityjob") {
+        const el =
+          document.querySelector(".job-org-name a") ||
+          document.querySelector(".job-org-name") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]');
+        if (el) return el.textContent.trim();
+      }
+
+      // S1Jobs
+      if (SITE === "s1jobs") {
+        const el =
+          document.querySelector(".company-name") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]');
+        if (el) return el.textContent.trim();
+      }
+
+      // NIJobs
+      if (SITE === "nijobs") {
+        const el =
+          document.querySelector(".company-name") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]');
+        if (el) return el.textContent.trim();
+      }
+
+      // Fish4Jobs
+      if (SITE === "fish4") {
+        const el =
+          document.querySelector(".company-name") ||
+          document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]') ||
+          document.querySelector(".recruiter-name");
+        if (el) return el.textContent.trim();
+      }
+
+      // Generic fallback — try common schema.org / structured data patterns
+      const schemaEl =
+        document.querySelector('[itemprop="hiringOrganization"] [itemprop="name"]') ||
+        document.querySelector('[itemprop="employer"] [itemprop="name"]');
+      if (schemaEl) return schemaEl.textContent.trim();
+
+      // Try JSON-LD structured data
+      const ldScripts = document.querySelectorAll('script[type="application/ld+json"]');
+      for (const s of ldScripts) {
+        try {
+          const data = JSON.parse(s.textContent);
+          const org = data.hiringOrganization || (data["@graph"] || []).find(i => i.hiringOrganization)?.hiringOrganization;
+          if (org) return typeof org === "string" ? org : org.name;
+        } catch (_) {}
       }
     } catch (e) {
       console.warn("[Sponsor Checker] extraction error:", e);
@@ -77,7 +260,7 @@
       <div class="uksw-details" id="uksw-details" style="display:none;">
         <div class="uksw-company" id="uksw-company"></div>
         <div class="uksw-match" id="uksw-match"></div>
-        <div class="uksw-site" id="uksw-site">${SITE.charAt(0).toUpperCase() + SITE.slice(1)}</div>
+        <div class="uksw-site" id="uksw-site">${SITE_NAMES[SITE] || SITE}</div>
       </div>
     `;
     document.body.appendChild(w);
@@ -140,7 +323,7 @@
     }, 1500);
   }
 
-  // Handle SPA navigation (LinkedIn is an SPA)
+  // Handle SPA navigation
   let lastUrl = location.href;
   const observer = new MutationObserver(() => {
     if (location.href !== lastUrl) {

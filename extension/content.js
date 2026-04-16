@@ -90,6 +90,45 @@
   // =========================================================
   function extractCompany() {
     try {
+      // --- Google Jobs: extract from selected/highlighted job card ---
+      if (KNOWN_SITE === "google") {
+        // Try selected job card company name
+        const googleSelectors = [
+          // Company name in the job detail panel
+          '.nJlQNd .vNEEBe',        // Company name in detail view
+          '.nJlQNd [data-attrid="subtitle"]',
+          '.whazf .wHYlTd',          // Company in job card
+          '.nJlQNd .wHYlTd',
+          // Highlighted/selected job listing
+          '.PwjeAc .vNEEBe',
+          '.PwjeAc .wHYlTd',
+          // Generic Google Jobs selectors
+          '[data-employer-name]',
+          '.job-details-company',
+          // Fallback: look in the visible job cards
+          '.vNEEBe',
+        ];
+        for (const sel of googleSelectors) {
+          const el = document.querySelector(sel);
+          if (el) {
+            const text = (el.getAttribute('data-employer-name') || el.textContent).trim();
+            if (text.length > 0 && text.length < 150) return text;
+          }
+        }
+        // Try to get from the selected/blue highlighted job card
+        const selectedCard = document.querySelector('.nJlQNd') || document.querySelector('[data-hveid].EimVGf');
+        if (selectedCard) {
+          const companyEl = selectedCard.querySelectorAll('div');
+          for (const d of companyEl) {
+            const t = d.textContent.trim();
+            // Company names are usually short and appear after the title
+            if (t.length > 1 && t.length < 80 && !t.includes('ago') && !t.includes('·') && d.children.length === 0) {
+              return t;
+            }
+          }
+        }
+      }
+
       // --- LinkedIn: broad selector list covering old and new layouts ---
       if (KNOWN_SITE === "linkedin") {
         const linkedinSelectors = [

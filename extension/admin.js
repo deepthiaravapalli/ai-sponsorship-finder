@@ -156,14 +156,16 @@
       showToast("No custom sponsors to export", "error");
       return;
     }
-    const blob = new Blob([JSON.stringify({ custom_sponsors: customSponsors }, null, 2)], { type: "application/json" });
+    const csvHeader = "Company Name\n";
+    const csvRows = customSponsors.map(s => '"' + s.replace(/"/g, '""') + '"').join("\n");
+    const blob = new Blob([csvHeader + csvRows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "custom_sponsors.json";
+    a.download = "custom_sponsors.csv";
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported " + customSponsors.length + " companies");
+    showToast("Exported " + customSponsors.length + " companies as CSV");
   });
 
   // Import
@@ -172,23 +174,21 @@
     const file = e.target.files[0];
     if (!file) return;
 
+    if (!file.name.endsWith(".csv")) {
+      showToast("Only CSV files are supported", "error");
+      importFile.value = "";
+      return;
+    }
+
     try {
       const text = await file.text();
-      let names = [];
-
-      if (file.name.endsWith(".json")) {
-        const json = JSON.parse(text);
-        names = json.custom_sponsors || json.sponsors || json;
-      } else {
-        names = text.split("\n");
-      }
-
-      if (!Array.isArray(names)) throw new Error("Invalid format");
-
+      const lines = text.split("\n");
       let added = 0;
-      names.forEach(n => {
-        const name = String(n).toUpperCase().trim();
-        if (name && !defaultSponsors.includes(name) && !customSponsors.includes(name)) {
+
+      lines.forEach(line => {
+        // Strip CSV quotes and whitespace
+        const name = line.replace(/^"|"$/g, "").replace(/""/g, '"').toUpperCase().trim();
+        if (name && name !== "COMPANY NAME" && !defaultSponsors.includes(name) && !customSponsors.includes(name)) {
           customSponsors.push(name);
           added++;
         }
@@ -198,7 +198,7 @@
       notifyBackground();
       updateStats();
       render();
-      showToast("Imported " + added + " new companies");
+      showToast("Imported " + added + " new companies from CSV");
     } catch (err) {
       showToast("Import failed: " + err.message, "error");
     }

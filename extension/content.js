@@ -12,6 +12,7 @@
   function detectKnownSite() {
     const h = location.hostname;
     const sites = {
+      "google.com": "google", "google.co.uk": "google",
       "linkedin.com": "linkedin",
       "indeed.com": "indeed", "indeed.co.uk": "indeed",
       "glassdoor.com": "glassdoor", "glassdoor.co.uk": "glassdoor",
@@ -37,7 +38,7 @@
   }
 
   const SITE_NAMES = {
-    linkedin: "LinkedIn", indeed: "Indeed", glassdoor: "Glassdoor",
+    google: "Google Jobs", linkedin: "LinkedIn", indeed: "Indeed", glassdoor: "Glassdoor",
     reed: "Reed", totaljobs: "Totaljobs", monster: "Monster UK",
     "cv-library": "CV-Library", cwjobs: "CWJobs", jobsite: "Jobsite",
     adzuna: "Adzuna", workable: "Workable", guardian: "Guardian Jobs",

@@ -5,6 +5,7 @@
   if (document.getElementById("uk-sponsor-widget")) return;
 
   const KNOWN_SITE = detectKnownSite();
+  let extracted = null;
   let widgetEl = null;
   let expanded = false;
 
@@ -46,7 +47,7 @@
   };
 
   // =========================================================
-  // JOB PAGE DETECTION
+  // JOB PAGE DETECTION — determines if current page is a job listing
   // =========================================================
   function isJobPage() {
     if (KNOWN_SITE) return true;
@@ -59,10 +60,12 @@
     ];
     if (jobKeywords.some(k => url.includes(k))) return true;
 
+    // Check meta tags
     const metaDesc = (document.querySelector('meta[name="description"]')?.content || "").toLowerCase();
     const metaKw = (document.querySelector('meta[name="keywords"]')?.content || "").toLowerCase();
     if (jobKeywords.some(k => metaDesc.includes(k) || metaKw.includes(k))) return true;
 
+    // Check for structured data (JobPosting schema)
     const ldScripts = document.querySelectorAll('script[type="application/ld+json"]');
     for (const s of ldScripts) {
       try {
@@ -71,6 +74,7 @@
       } catch (_) {}
     }
 
+    // Check page content for job-related headings
     const headings = document.querySelectorAll("h1, h2, h3");
     const headingText = Array.from(headings).map(h => h.textContent.toLowerCase()).join(" ");
     const strongJobSignals = ["apply now", "job description", "job details", "about the role", "responsibilities", "requirements", "qualifications"];
@@ -80,47 +84,20 @@
   }
 
   // =========================================================
-  // COMPANY EXTRACTION — with multiple strategies
+  // COMPANY EXTRACTION — site-specific + universal fallbacks
   // =========================================================
   function extractCompany() {
     try {
-      // --- LinkedIn: broad selector list covering old and new layouts ---
-      if (KNOWN_SITE === "linkedin") {
-        const linkedinSelectors = [
-          // New unified top card
-          ".job-details-jobs-unified-top-card__company-name a",
-          ".job-details-jobs-unified-top-card__company-name",
-          // Older layouts
-          ".jobs-unified-top-card__company-name a",
-          ".jobs-unified-top-card__company-name",
-          ".topcard__org-name-link",
-          ".top-card-layout__second-subline a",
-          '[data-tracking-control-name="public_jobs_topcard-org-name"]',
-          // Even more fallbacks
-          ".jobs-details__main-content .jobs-unified-top-card__subtitle-primary-grouping a",
-          ".job-details-jobs-unified-top-card__primary-description-container a",
-          ".artdeco-entity-lockup__subtitle a",
-          ".artdeco-entity-lockup__subtitle",
-          // Try any link near the job title area that looks like a company
-          ".jobs-details-top-card__company-url",
-        ];
-        for (const sel of linkedinSelectors) {
-          const el = document.querySelector(sel);
-          if (el) {
-            const text = el.textContent.trim();
-            if (text.length > 0 && text.length < 150) return text;
-          }
-        }
-
-        // LinkedIn fallback: look for company name in the URL
-        const urlMatch = location.pathname.match(/at-([a-z0-9-]+)-\d/i);
-        if (urlMatch) {
-          return urlMatch[1].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-        }
-      }
-
-      // --- Known site extractors for non-LinkedIn ---
+      // --- Known site extractors ---
       const siteExtractors = {
+        linkedin: () => (
+          document.querySelector(".job-details-jobs-unified-top-card__company-name a") ||
+          document.querySelector(".jobs-unified-top-card__company-name a") ||
+          document.querySelector(".topcard__org-name-link") ||
+          document.querySelector(".job-details-jobs-unified-top-card__company-name") ||
+          document.querySelector('[data-tracking-control-name="public_jobs_topcard-org-name"]') ||
+          document.querySelector(".top-card-layout__second-subline a")
+        ),
         indeed: () => (
           document.querySelector('[data-testid="inlineHeader-companyName"] a') ||
           document.querySelector('[data-testid="inlineHeader-companyName"]') ||
@@ -145,10 +122,11 @@
           document.querySelector('[data-at="header-company-name"]') ||
           document.querySelector(".company-link") || document.querySelector('[class*="CompanyName"]')
         ),
-        monster: () => (
-          document.querySelector('[data-testid="company-name"]') ||
-          document.querySelector(".job-header-company a") || document.querySelector(".job-header-company")
-        ),
+        monster: () => {
+          const el = document.querySelector('[data-testid="company-name"]') ||
+            document.querySelector(".job-header-company a") || document.querySelector(".job-header-company");
+          return el;
+        },
         "cv-library": () => (
           document.querySelector(".job-header__company a") || document.querySelector(".job-header__company") ||
           document.querySelector('[data-company-name]')
@@ -194,12 +172,12 @@
         ),
       };
 
+      // Try known site extractor first
       if (KNOWN_SITE && siteExtractors[KNOWN_SITE]) {
         const el = siteExtractors[KNOWN_SITE]();
         if (el) {
           const raw = (el.content || el.textContent).trim();
-          const result = el._clean ? el._clean(raw) : raw;
-          if (result.length > 0) return result;
+          return el._clean ? el._clean(raw) : raw;
         }
       }
 
@@ -243,13 +221,14 @@
       // 4. Open Graph / meta tag extraction
       const ogSite = document.querySelector('meta[property="og:site_name"]');
       if (ogSite && ogSite.content && !["LinkedIn", "Indeed", "Glassdoor"].includes(ogSite.content)) {
+        // Could be the company's own career page
         const title = document.title.toLowerCase();
         if (["career", "job", "hiring", "apply"].some(k => title.includes(k))) {
           return ogSite.content.trim();
         }
       }
 
-      // 5. Career page pattern from title
+      // 5. Career page pattern: "Careers at [Company]" or "[Company] - Jobs"
       const titleMatch = document.title.match(
         /(?:careers?\s+(?:at|@)\s+(.+?)(?:\s*[-|–—]|$))|(?:(.+?)\s*[-|–—]\s*(?:careers?|jobs?|hiring|vacancies))/i
       );
@@ -319,41 +298,8 @@
     } else {
       dot.classList.add("uksw-yellow");
       label.textContent = "Unknown ⚠️";
-      company.textContent = result.company ? `Detected: ${result.company}` : "Could not detect company";
+      company.textContent = "Could not detect company";
       match.textContent = "Try refreshing the page";
-    }
-  }
-
-  // =========================================================
-  // CHECK with retry logic
-  // =========================================================
-  function checkSponsor(companyName) {
-    chrome.runtime.sendMessage(
-      { type: "CHECK_SPONSOR", company: companyName },
-      (response) => {
-        if (chrome.runtime.lastError) {
-          updateWidget({ status: "unknown", company: companyName });
-          return;
-        }
-        updateWidget(response);
-      }
-    );
-  }
-
-  // Retry extraction multiple times with increasing delays
-  function extractWithRetry(attemptsLeft, delay) {
-    const company = extractCompany();
-    if (company) {
-      console.log("[Sponsor Checker] Extracted company:", company);
-      checkSponsor(company);
-      return;
-    }
-
-    if (attemptsLeft > 0) {
-      setTimeout(() => extractWithRetry(attemptsLeft - 1, delay + 500), delay);
-    } else {
-      console.warn("[Sponsor Checker] Could not extract company after retries");
-      updateWidget({ status: "unknown" });
     }
   }
 
@@ -361,11 +307,23 @@
   // MAIN FLOW
   // =========================================================
   function run() {
+    // Only show widget on job pages
     if (!isJobPage()) return;
 
     createWidget();
-    // Start extraction after a short initial delay, then retry up to 5 times
-    setTimeout(() => extractWithRetry(5, 1000), 800);
+    setTimeout(() => {
+      extracted = extractCompany();
+      chrome.runtime.sendMessage(
+        { type: "CHECK_SPONSOR", company: extracted },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            updateWidget({ status: "unknown" });
+            return;
+          }
+          updateWidget(response);
+        }
+      );
+    }, 1500);
   }
 
   // Handle SPA navigation
